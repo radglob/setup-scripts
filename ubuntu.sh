@@ -1,41 +1,66 @@
 #!/bin/bash
 
-apt-get update
-apt-get upgrade -y
+OH_MY_ZSH_DIR="$HOME/.oh-my-zsh"
+RBENV_DIR="$HOME/.rbenv"
+RUBY_VERSION="2.2.2"
+NVM_DIR="$HOME/.nvm"
+NODE_VERSION="0.12.4"
+PROFILE="$HOME/.zshrc"
 
-apt-get install -y zsh \
+sudo apt-get update
+sudo apt-get upgrade -y
+
+sudo apt-get install -y zsh \
   git \
   curl \
   ruby \
   libssl-dev
 
 # Install oh-my-zsh
-curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
-
-chsh $USER -s $(which zsh)
-
-echo "Configure zsh to your liking."
+# Check if oh-my-zsh is already installed.
+if [ ! -d "$OH_MY_ZSH_DIR" ]; then
+	echo "Installing Oh My Zsh..."
+	curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
+else
+	echo "Oh My Zsh is already installed!"
+fi
 
 # Install rbenv.
-git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
-echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
-echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+if [ ! -d "$RBENV_DIR" ]; then
+	echo "Installing rbenv and ruby-build"
+	git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
+	echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
+	echo 'eval "$(rbenv init -)"' >> ~/.zshrc
 
-# Install ruby-build
-git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-
-source ~/.zshrc
+	# Install ruby-build
+	git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+else
+	echo "rbenv and ruby-build are already installed."
+fi
 
 # Install new(ish) version of ruby.
-rbenv install 2.2.2
+if [ $(rbenv global) != "$RUBY_VERSION" ]; then
+	rbenv install $RUBY_VERSION
+	rbenv global $RUBY_VERSION
+else
+	echo "Ruby $RUBY_VERSION is already installed."
+fi
 
 # Install nvm.
-# Set PROFILE so nvm appends to correct file.
-echo 'export PROFILE="~/.zshrc"' >> ~/.zshrc && source ~/.zshrc
+if [ ! -d "$NVM_DIR" ]; then 
+	echo "Downloading and installing nvm..."
+	curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+else
+	echo "nvm is already installed..."
+fi
 
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.25.4/install.sh | zsh
+echo "Changing shell to zsh."
+chsh $USER -s $(which zsh)
+source ~/.zshrc
 
 # Install recent version of node.
-nvm install 0.12.4
+nvm install $NODE_VERSION
+nvm alias default $NODE_VERSION
+nvm use default
 
 echo "zsh, ruby, and node are all installed. Configure things to your liking!"
