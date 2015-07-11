@@ -5,7 +5,6 @@ RBENV_DIR="$HOME/.rbenv"
 RUBY_VERSION="2.2.2"
 NVM_DIR="$HOME/.nvm"
 NODE_VERSION="0.12.4"
-PROFILE="$HOME/.zshrc"
 
 sudo apt-get update
 sudo apt-get upgrade -y
@@ -28,12 +27,12 @@ fi
 # Install rbenv.
 if [ ! -d "$RBENV_DIR" ]; then
 	echo "Installing rbenv and ruby-build"
-	git clone https://github.com/sstephenson/rbenv.git ~/.rbenv
-	echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
-	echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+	git clone https://github.com/sstephenson/rbenv.git $HOME/.rbenv
+	echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $HOME/.zshrc
+	echo 'eval "$(rbenv init -)"' >> $HOME/.zshrc
 
 	# Install ruby-build
-	git clone https://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+	git clone https://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
 else
 	echo "rbenv and ruby-build are already installed."
 fi
@@ -49,14 +48,14 @@ fi
 # Install nvm.
 if [ ! -d "$NVM_DIR" ]; then 
 	echo "Downloading and installing nvm..."
-	curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+	curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | PROFILE="$HOME/.zshrc" bash
 else
 	echo "nvm is already installed..."
 fi
 
 echo "Changing shell to zsh."
 chsh $USER -s $(which zsh)
-source ~/.zshrc
+source $HOME/.zshrc
 
 # Install recent version of node.
 nvm install $NODE_VERSION
