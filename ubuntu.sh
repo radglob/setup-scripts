@@ -53,9 +53,7 @@ else
 	echo "nvm is already installed..."
 fi
 
-echo "Changing shell to zsh."
-chsh $USER -s $(which zsh)
-source $HOME/.zshrc
+source $HOME/.nvm/nvm.sh
 
 # Install recent version of node.
 nvm install $NODE_VERSION
